@@ -1,0 +1,13 @@
+[package]
+name = "rpower"
+version = "0.0.1"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+config = "0.13.3"
+home = "0.5.4"
+iced = { version = "0.8.0", features = ["svg"] }
+serde = "1.0.152"
+thiserror = "1.0.38"

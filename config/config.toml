@@ -1,0 +1,14 @@
+# Required
+width = 500
+height = 100
+
+# Optional
+poweroff_cmd = "echo hi"
+reboot_cmd = "sudo reboot"
+suspend_cmd = "loginctl suspend"
+lock_cmd = "echo hi"
+
+[buttons]
+icon_color = [85, 85, 85]
+normal     = [33, 33, 33]
+hover      = [60, 60, 60]
