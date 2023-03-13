@@ -1,6 +1,7 @@
 # Required
 width = 500
 height = 100
+background = [22, 22, 22]
 
 # Optional
 poweroff_cmd = "echo hi"
