@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center"> rpower </h1>
-<p align="center">Power menu written in Rust, because I've grown bored of [rofi]() and needed something simple, customizable and (kinda) light.</p>
+<p align="center">Power menu written in Rust, because I've grown bored of rofi and needed something simple, customizable and (kinda) light.</p>
 
 ## Prequesities
 - [Vulkan](https://wiki.archlinux.org/title/Vulkan) (because of [this issue](https://github.com/iced-rs/iced/issues/1103))
@@ -29,11 +29,11 @@ All configuration is located in $HOME/.config/rpower
 - `background` => Color of background behind buttons (format: `[r, g, b]`)
 
 #### Buttons
-- commands      => List of commands coresponding to each button
-- icon_names    => List of icon filenames (without extension) in the icons folder
-- icon_colors   => List of icons colors
-- normal_colors => List of button background colors when not hovered
-- hover_colors  => List of button background colors when hovered
+- `commands`      => List of commands coresponding to each button
+- `icon_names`    => List of icon filenames (without extension) in the icons folder
+- `icon_colors`   => List of icons colors
+- `normal_colors` => List of button background colors when not hovered
+- `hover_colors`  => List of button background colors when hovered
 
 ### [Button Icons](./config/icons)
 - You can change any button to any svg inside the icon folder using `icon_names`
