@@ -28,25 +28,17 @@ All configuration is located in $HOME/.config/rpower
 - `height` => Window height
 - `background` => Color of background behind buttons (format: `[r, g, b]`)
 
-#### Commands
-- `poweroff_cmd` => Command is ran when the poweroff (first) button is pressed
-- `reboot_cmd` => Command is ran when the reboot (second) button is pressed
-- `suspend_cmd` => Command is ran when the suspend (third) button is pressed
-- `lock_cmd` => Command is ran when the lock (fourth) button is pressed
-
 #### Buttons
-- You need to anotate this with `[buttons]`
-- icon_color => Icon color (same format as window background)
-- normal     => Standard background (same format as window background)
-- hover      => On-hover background (same format as window background)
+- commands      => List of commands coresponding to each button
+- icon_names    => List of icon filenames (without extension) in the icons folder
+- icon_colors   => List of icons colors
+- normal_colors => List of button background colors when not hovered
+- hover_colors  => List of button background colors when hovered
 
-### [icons](./config/icons)
-- You can change any icon by changing the image and keeping the name
+### [Button Icons](./config/icons)
+- You can change any button to any svg inside the icon folder using `icon_names`
 - Included icons come source:
   - [Poweroff](https://www.svgrepo.com/svg/332492/poweroff)
   - [Reboot](https://www.svgrepo.com/svg/487723/reload-ui-2?edit=true)
   - [Suspend](https://www.svgrepo.com/svg/353055/controller-paus)
   - [Lock](https://www.svgrepo.com/svg/505417/lock-on)
-  
-## Gallery
-TODO
