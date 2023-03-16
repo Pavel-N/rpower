@@ -1,12 +1,19 @@
 use crate::{execute_cmd, menu_button::MenuButton};
-use iced::{keyboard::KeyCode, Application, Color, Command, Theme};
+use iced::{
+    application::{Appearance, StyleSheet},
+    keyboard::KeyCode,
+    widget::Row,
+    Application, Color, Command, Theme,
+};
 
+// Default values usee in button creation
 const DEFAULT_COMMAND: &str = "echo";
 const DEFAULT_ICON_NAME: &str = "poweroff";
 const DEFAULT_ICON_COLOR: (u8, u8, u8) = (85, 85, 85);
 const DEFAULT_NORMAL_COLOR: (u8, u8, u8) = (33, 33, 33);
 const DEFAULT_HOVER_COLOR: (u8, u8, u8) = (60, 60, 60);
 
+/// Config build from `config.toml` file
 #[derive(serde::Deserialize, Default, Clone)]
 pub struct RPowerConfig {
     // Window
@@ -22,12 +29,14 @@ pub struct RPowerConfig {
     hover_colors: Vec<(u8, u8, u8)>,
 }
 
+/// Messages sent by application
 #[derive(Debug, Clone)]
 pub enum RPowerMessage {
     MenuButtonPressed(String /* command */),
     EventOccured(iced::Event),
 }
 
+/// Main application struct
 #[derive(Clone)]
 pub struct RPower {
     config: RPowerConfig,
@@ -45,12 +54,6 @@ impl Application for RPower {
     fn new(flags: Self::Flags) -> (Self, Command<Self::Message>) {
         let config = flags.0;
         let home_dir = &flags.1;
-
-        // NOTE Icons come from:
-        // https://www.svgrepo.com/svg/332492/poweroff
-        // https://www.svgrepo.com/svg/353055/controller-paus
-        // https://www.svgrepo.com/svg/505417/lock-on
-        // https://www.svgrepo.com/svg/487723/reload-ui-2?edit=true
 
         let button_num = &config.commands.len().max(
             config.icon_colors.len().max(
@@ -115,6 +118,7 @@ impl Application for RPower {
                 execute_cmd!(command);
                 return iced::window::close();
             }
+            // App event occured
             Self::Message::EventOccured(e) => match e {
                 iced::Event::Keyboard(iced::keyboard::Event::KeyPressed {
                     key_code,
@@ -187,7 +191,7 @@ impl Application for RPower {
     }
 
     fn view(&self) -> iced::Element<'_, Self::Message> {
-        iced::widget::Row::with_children(
+        Row::with_children(
             self.buttons
                 .clone()
                 .into_iter()
@@ -199,7 +203,7 @@ impl Application for RPower {
         .into()
     }
 
-    fn style(&self) -> <Self::Theme as iced::application::StyleSheet>::Style {
+    fn style(&self) -> <Self::Theme as StyleSheet>::Style {
         iced::theme::Application::Custom(Box::new(self.clone()))
     }
 
@@ -208,11 +212,12 @@ impl Application for RPower {
     }
 }
 
-impl iced::application::StyleSheet for RPower {
+/// Application window style
+impl StyleSheet for RPower {
     type Style = Theme;
 
-    fn appearance(&self, _style: &Self::Style) -> iced::application::Appearance {
-        iced::application::Appearance {
+    fn appearance(&self, _style: &Self::Style) -> Appearance {
+        Appearance {
             background_color: Color::from_rgb8(
                 self.config.background.0,
                 self.config.background.1,

@@ -1,6 +1,7 @@
 // Global types
 pub type Result<T> = core::result::Result<T, Error>;
 
+/// Executes given command using `sh`
 #[macro_export]
 macro_rules! execute_cmd {
     ($cmd:expr) => {

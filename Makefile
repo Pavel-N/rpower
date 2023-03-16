@@ -7,9 +7,6 @@ all:
 	@cp -rn ./config/* $(HOME)/.config/rpower
 	@echo "Building..."
 	@$(CARGO) build --release
-	@echo "Done!"
-
-install:
 	@echo "Installing..."
-	@install -Dm755 ./target/release/rpower $(PREFIX)/rpower
+	cargo install --path .
 	@echo "Done, enjoy! :)"

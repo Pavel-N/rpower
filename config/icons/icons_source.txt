@@ -1,0 +1,7 @@
+// Icons come from:
+// https://www.svgrepo.com/svg/332492/poweroff
+// https://www.svgrepo.com/svg/353055/controller-paus
+// https://www.svgrepo.com/svg/505417/lock-on
+// https://www.svgrepo.com/svg/487723/reload-ui-2?edit=true
+
+
