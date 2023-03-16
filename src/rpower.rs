@@ -1,9 +1,15 @@
 use crate::{execute_cmd, menu_button::MenuButton};
 use iced::{keyboard::KeyCode, Application, Color, Command, Theme};
 
+const DEFAULT_COMMAND: &str = "echo";
+const DEFAULT_ICON_NAME: &str = "poweroff";
+const DEFAULT_ICON_COLOR: (u8, u8, u8) = (85, 85, 85);
+const DEFAULT_NORMAL_COLOR: (u8, u8, u8) = (33, 33, 33);
+const DEFAULT_HOVER_COLOR: (u8, u8, u8) = (60, 60, 60);
+
 #[derive(serde::Deserialize, Default, Clone)]
 pub struct RPowerConfig {
-    // Required
+    // Window
     pub width: u32,
     pub height: u32,
     background: (u8, u8, u8),
@@ -60,16 +66,23 @@ impl Application for RPower {
             let command: String = config
                 .commands
                 .get(i)
-                .unwrap_or(&"echo".to_string())
+                .unwrap_or(&DEFAULT_COMMAND.to_string())
                 .clone();
             let icon_path: String = format!(
                 "{}/.config/rpower/icons/{}.svg",
                 home_dir,
-                config.icon_names.get(i).unwrap_or(&String::new()).clone()
+                config
+                    .icon_names
+                    .get(i)
+                    .unwrap_or(&DEFAULT_ICON_NAME.to_string())
+                    .clone()
             );
-            let icon_color: (u8, u8, u8) = *config.icon_colors.get(i).unwrap_or(&(85, 85, 85));
-            let normal_color: (u8, u8, u8) = *config.normal_colors.get(i).unwrap_or(&(33, 33, 33));
-            let hover_color: (u8, u8, u8) = *config.hover_colors.get(i).unwrap_or(&(60, 60, 60));
+            let icon_color: (u8, u8, u8) =
+                *config.icon_colors.get(i).unwrap_or(&DEFAULT_ICON_COLOR);
+            let normal_color: (u8, u8, u8) =
+                *config.normal_colors.get(i).unwrap_or(&DEFAULT_NORMAL_COLOR);
+            let hover_color: (u8, u8, u8) =
+                *config.hover_colors.get(i).unwrap_or(&DEFAULT_HOVER_COLOR);
 
             buttons.push(MenuButton::new(
                 command,

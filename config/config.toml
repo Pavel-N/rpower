@@ -1,10 +1,14 @@
-# Required
+# Window setup
 width = 500
 height = 100
 background = [22, 22, 22]
 
-commands = ["loginctl poweroff", "loginctl reboot", "loginctl suspend"]
-icon_names          = ["poweroff", "reboot", "suspend", "lock"]
-icon_colors         = [[85, 85, 85]]
-normal_colors       = [[33, 33, 33]]
-hover_colors        = [[60, 60, 60]]
+# Setup for each button
+# Number of buttons is decided by option with the most fields,
+# i.e. I've provided four icon names, so there will be four buttons
+# Missing values will autofill with default values
+commands       = ["loginctl poweroff", "loginctl reboot", "loginctl suspend"]
+icon_names     = ["poweroff", "reboot", "suspend", "lock"]
+icon_colors    = [[85, 85, 85]]  
+normal_colors  = [[33, 33, 33]]
+hover_colors   = [[60, 60, 60]]
