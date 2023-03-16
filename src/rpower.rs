@@ -1,7 +1,4 @@
-use crate::{
-    execute_cmd,
-    menu_button::{MenuButton, MenuButtonConfig},
-};
+use crate::{execute_cmd, menu_button::MenuButton};
 use iced::{keyboard::KeyCode, Application, Color, Command, Theme};
 
 #[derive(serde::Deserialize, Default, Clone)]
@@ -9,13 +6,14 @@ pub struct RPowerConfig {
     // Required
     pub width: u32,
     pub height: u32,
-    buttons: MenuButtonConfig,
-    // Optional
     background: (u8, u8, u8),
-    poweroff_cmd: Option<String>,
-    reboot_cmd: Option<String>,
-    suspend_cmd: Option<String>,
-    lock_cmd: Option<String>,
+
+    // Buttons
+    commands: Vec<String>,
+    icon_names: Vec<String>,
+    icon_colors: Vec<(u8, u8, u8)>,
+    normal_colors: Vec<(u8, u8, u8)>,
+    hover_colors: Vec<(u8, u8, u8)>,
 }
 
 #[derive(Debug, Clone)]
@@ -27,8 +25,9 @@ pub enum RPowerMessage {
 #[derive(Clone)]
 pub struct RPower {
     config: RPowerConfig,
-    selected_button_index: Option<usize>,
+    selected_button_index: usize,
     buttons: Vec<MenuButton>,
+    using_mouse: bool,
 }
 
 impl Application for RPower {
@@ -46,41 +45,47 @@ impl Application for RPower {
         // https://www.svgrepo.com/svg/353055/controller-paus
         // https://www.svgrepo.com/svg/505417/lock-on
         // https://www.svgrepo.com/svg/487723/reload-ui-2?edit=true
-        let mut menu_buttons = vec![];
-        if let Some(pc) = &config.poweroff_cmd {
-            menu_buttons.push(MenuButton::new(
-                pc,
-                config.buttons,
-                format!("{home_dir}/.config/rpower/icons/poweroff.svg"),
-            ));
-        }
-        if let Some(rc) = &config.reboot_cmd {
-            menu_buttons.push(MenuButton::new(
-                rc,
-                config.buttons,
-                format!("{home_dir}/.config/rpower/icons/reboot.svg"),
-            ));
-        }
-        if let Some(sc) = &config.suspend_cmd {
-            menu_buttons.push(MenuButton::new(
-                sc,
-                config.buttons,
-                format!("{home_dir}/.config/rpower/icons/suspend.svg"),
-            ));
-        }
-        if let Some(lc) = &config.lock_cmd {
-            menu_buttons.push(MenuButton::new(
-                lc,
-                config.buttons,
-                format!("{home_dir}/.config/rpower/icons/lock.svg"),
+
+        let button_num = &config.commands.len().max(
+            config.icon_colors.len().max(
+                config
+                    .icon_names
+                    .len()
+                    .max(config.normal_colors.len().max(config.hover_colors.len())),
+            ),
+        );
+        let mut buttons: Vec<MenuButton> = vec![];
+
+        for i in 0..*button_num {
+            let command: String = config
+                .commands
+                .get(i)
+                .unwrap_or(&"echo".to_string())
+                .clone();
+            let icon_path: String = format!(
+                "{}/.config/rpower/icons/{}.svg",
+                home_dir,
+                config.icon_names.get(i).unwrap_or(&String::new()).clone()
+            );
+            let icon_color: (u8, u8, u8) = *config.icon_colors.get(i).unwrap_or(&(85, 85, 85));
+            let normal_color: (u8, u8, u8) = *config.normal_colors.get(i).unwrap_or(&(33, 33, 33));
+            let hover_color: (u8, u8, u8) = *config.hover_colors.get(i).unwrap_or(&(60, 60, 60));
+
+            buttons.push(MenuButton::new(
+                command,
+                icon_path,
+                icon_color,
+                normal_color,
+                hover_color,
             ));
         }
 
         (
             Self {
                 config,
-                selected_button_index: None,
-                buttons: menu_buttons,
+                selected_button_index: 99,
+                buttons,
+                using_mouse: false,
             },
             Command::none(),
         )
@@ -108,8 +113,8 @@ impl Application for RPower {
                     }
                     // Execute selected button when enter is pressed
                     KeyCode::Enter => {
-                        if let Some(i) = self.selected_button_index {
-                            execute_cmd!(self.buttons[i].command);
+                        if !self.using_mouse {
+                            execute_cmd!(self.buttons[self.selected_button_index].command);
                             return iced::window::close();
                         }
                         return Command::none();
@@ -117,45 +122,48 @@ impl Application for RPower {
                     // Select button on left or wrap around
                     KeyCode::Left | KeyCode::A | KeyCode::H => {
                         // TODO Add buttons to single vector (and use next/prev/start/end) instead of this
-                        if self.selected_button_index.is_none() {
-                            self.selected_button_index = Some(0);
-                        } else if self.selected_button_index.unwrap() > 0 {
-                            self.selected_button_index =
-                                Some(self.selected_button_index.unwrap() - 1);
-                        } else {
-                            self.selected_button_index = Some(self.buttons.len() - 1);
-                        }
+                        if !self.using_mouse {
+                            if self.selected_button_index == 99 {
+                                self.selected_button_index = self.buttons.len() - 1;
+                            } else if self.selected_button_index > 0 {
+                                self.selected_button_index -= 1;
+                            } else {
+                                self.selected_button_index = self.buttons.len() - 1;
+                            }
 
-                        for b in &mut self.buttons {
-                            b.selected = false;
+                            for b in &mut self.buttons {
+                                b.selected = false;
+                            }
+                            self.buttons[self.selected_button_index].selected = true;
                         }
-                        self.buttons[self.selected_button_index.unwrap()].selected = true;
                     }
                     // Select button on right or wrap around
                     KeyCode::Right | KeyCode::D | KeyCode::L => {
-                        if !self.buttons.iter().any(|b| b.selected) {
-                            self.selected_button_index = Some(self.buttons.len() - 1);
-                        } else if self.selected_button_index.unwrap() < self.buttons.len() - 1 {
-                            self.selected_button_index =
-                                Some(self.selected_button_index.unwrap() + 1);
-                        } else {
-                            self.selected_button_index = None;
-                        }
+                        if !self.using_mouse {
+                            if self.selected_button_index < self.buttons.len() - 1 {
+                                self.selected_button_index += 1;
+                            } else {
+                                self.selected_button_index = 0;
+                            }
 
-                        for b in &mut self.buttons {
-                            b.selected = false;
+                            for b in &mut self.buttons {
+                                b.selected = false;
+                            }
+                            self.buttons[self.selected_button_index].selected = true;
                         }
-                        self.buttons[self.selected_button_index.unwrap()].selected = true;
                     }
                     _ => (),
                 },
                 // Unselect all buttons when user uses mouse
                 iced::Event::Mouse(me) => {
                     if me == iced::mouse::Event::CursorEntered {
+                        self.using_mouse = true;
                         for b in &mut self.buttons {
                             b.selected = false;
                         }
-                        self.selected_button_index = None;
+                        self.selected_button_index = 99;
+                    } else if me == iced::mouse::Event::CursorLeft {
+                        self.using_mouse = false;
                     }
                 }
                 _ => (),

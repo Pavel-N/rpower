@@ -3,37 +3,40 @@ use iced::{
     widget::{button, svg},
     Background, Color, Length, Theme,
 };
-use serde::Deserialize;
-
-#[allow(clippy::module_name_repetitions)]
-#[derive(Debug, Deserialize, Default, Clone, Copy)]
-pub struct MenuButtonConfig {
-    icon_color: Option<(u8, u8, u8)>,
-    normal: Option<(u8, u8, u8)>,
-    hover: Option<(u8, u8, u8)>,
-}
 
 #[derive(Debug, Default, Clone)]
 pub struct MenuButton {
-    pub selected: bool, // TODO Implement keyboard selection
+    pub selected: bool,
     pub command: String,
     icon_path: String,
-    config: MenuButtonConfig,
+    icon_color: (u8, u8, u8),
+    normal_color: (u8, u8, u8),
+    hover_color: (u8, u8, u8),
 }
 
 impl MenuButton {
-    pub fn new(command: &str, config: MenuButtonConfig, icon_path: String) -> Self {
+    pub const fn new(
+        command: String,
+        icon_path: String,
+        icon_color: (u8, u8, u8),
+        normal_color: (u8, u8, u8),
+        hover_color: (u8, u8, u8),
+    ) -> Self {
         Self {
             selected: false,
-            command: command.to_string(),
+            command,
             icon_path,
-            config,
+            icon_color,
+            normal_color,
+            hover_color,
         }
     }
 
     pub fn view(&self) -> impl Into<iced::Element<'static, RPowerMessage, iced::Renderer>> {
         let stylesheet = MenuButtonStylesheet {
-            config: self.config,
+            icon_color: self.icon_color,
+            normal_color: self.normal_color,
+            hover_color: self.hover_color,
             selected: self.selected,
         };
 
@@ -51,19 +54,21 @@ impl MenuButton {
 
 #[derive(Clone, Copy)]
 struct MenuButtonStylesheet {
-    config: MenuButtonConfig,
+    icon_color: (u8, u8, u8),
+    normal_color: (u8, u8, u8),
+    hover_color: (u8, u8, u8),
     selected: bool,
 }
 impl svg::StyleSheet for MenuButtonStylesheet {
     type Style = Theme;
 
     fn appearance(&self, _style: &Self::Style) -> svg::Appearance {
-        let icon_color = self.config.icon_color.map_or(Color::WHITE, |color| {
-            Color::from_rgb8(color.0, color.1, color.2)
-        });
-
         svg::Appearance {
-            color: Some(icon_color),
+            color: Some(Color::from_rgb8(
+                self.icon_color.0,
+                self.icon_color.1,
+                self.icon_color.2,
+            )),
         }
     }
 }
@@ -73,13 +78,13 @@ impl button::StyleSheet for MenuButtonStylesheet {
 
     fn active(&self, _style: &Self::Style) -> button::Appearance {
         let background_color = if self.selected {
-            self.config.hover.map_or(Color::BLACK, |color| {
-                Color::from_rgb8(color.0, color.1, color.2)
-            })
+            Color::from_rgb8(self.hover_color.0, self.hover_color.1, self.hover_color.2)
         } else {
-            self.config.normal.map_or(Color::BLACK, |color| {
-                Color::from_rgb8(color.0, color.1, color.2)
-            })
+            Color::from_rgb8(
+                self.normal_color.0,
+                self.normal_color.1,
+                self.normal_color.2,
+            )
         };
 
         iced::widget::button::Appearance {
@@ -89,12 +94,12 @@ impl button::StyleSheet for MenuButtonStylesheet {
     }
 
     fn hovered(&self, style: &Self::Style) -> button::Appearance {
-        let hover_color = self.config.hover.map_or(Color::BLACK, |color| {
-            Color::from_rgb8(color.0, color.1, color.2)
-        });
-
         button::Appearance {
-            background: Some(Background::Color(hover_color)),
+            background: Some(Background::Color(Color::from_rgb8(
+                self.hover_color.0,
+                self.hover_color.1,
+                self.hover_color.2,
+            ))),
             ..self.active(style)
         }
     }

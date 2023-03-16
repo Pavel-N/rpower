@@ -3,13 +3,8 @@ width = 500
 height = 100
 background = [22, 22, 22]
 
-# Optional
-poweroff_cmd = "echo hi"
-reboot_cmd = "sudo reboot"
-suspend_cmd = "loginctl suspend"
-lock_cmd = "echo hi"
-
-[buttons]
-icon_color = [85, 85, 85]
-normal     = [33, 33, 33]
-hover      = [60, 60, 60]
+commands = ["loginctl poweroff", "loginctl reboot", "loginctl suspend"]
+icon_names          = ["poweroff", "reboot", "suspend", "lock"]
+icon_colors         = [[85, 85, 85]]
+normal_colors       = [[33, 33, 33]]
+hover_colors        = [[60, 60, 60]]
