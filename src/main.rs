@@ -7,9 +7,8 @@ use error::Error;
 use iced::Application;
 
 fn main() -> Result<()> {
-    // HACK Images render as black rectangles when using different backend
-    // https://github.com/iced-rs/iced/issues/1103
-    std::env::set_var("WGPU_BACKEND", "vulkan");
+    // NOTE: My machine
+    std::env::set_var("WGPU_BACKEND", "primary");
 
     // Get home directory
     let home_dir = home::home_dir()
@@ -31,9 +30,10 @@ fn main() -> Result<()> {
             size: (config.width, config.height),
             resizable: false,
             decorations: false,
-            always_on_top: true,
+            // always_on_top: true,
             ..Default::default()
         },
+        antialiasing: false,
         flags: (config, home_dir),
         ..Default::default()
     })?;

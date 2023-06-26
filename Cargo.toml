@@ -8,6 +8,6 @@ edition = "2021"
 [dependencies]
 config = "0.13.3"
 home = "0.5.4"
-iced = { version = "0.8.0", features = ["svg"] }
+iced = { git = "https://github.com/iced-rs/iced.git", rev = "ef18ecf", features = ["svg", "debug"] }
 serde = "1.0.152"
 thiserror = "1.0.38"
