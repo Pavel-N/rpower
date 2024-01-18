@@ -6,11 +6,10 @@
 <p align="center">Power menu written in Rust, because I've grown bored of rofi and needed something simple, customizable and (kinda) light.</p>
 
 ## Prequesities
-- [Vulkan](https://wiki.archlinux.org/title/Vulkan) (because of [this issue](https://github.com/iced-rs/iced/issues/1103))
 - [Cargo](https://github.com/rust-lang/cargo)
 
 ## Instalation
-To build as release and initialize cofig directory:
+To build as release and initialize config directory:
 ```shell
 $ make
 ```
@@ -38,3 +37,7 @@ All configuration is located in $HOME/.config/rpower
   - [Reboot](https://www.svgrepo.com/svg/487723/reload-ui-2?edit=true)
   - [Suspend](https://www.svgrepo.com/svg/353055/controller-paus)
   - [Lock](https://www.svgrepo.com/svg/505417/lock-on)
+
+## Known bugs
+- [This Iced error](https://github.com/iced-rs/iced/issues/2047) message can sometimes appear, however it should not cause major problems
+
