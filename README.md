@@ -14,10 +14,6 @@ To build as release and initialize cofig directory:
 ```shell
 $ make
 ```
-To install executable in /usr/bin:
-```shell
-$ sudo make install
-```
 
 ## Configuration
 All configuration is located in $HOME/.config/rpower
